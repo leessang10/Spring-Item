@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <!-- CSS only -->
@@ -21,25 +21,30 @@
     </div>
     <h4 class="mb-3 text-center">상품 등록</h4>
     <form action="item.html" th:action th:object="${item}" method="post">
-        <div>
-            <label for="itemName">상품명</label>
+        <div class="form-floating mb-2">
             <input type="text" id="itemName" th:field="*{itemName}"
-                   th:errorclass="field-error" class="form-control" placeholder="이름을 입력하세요">
-            <div class="field-error" th:errors="*{itemName}">상품명 오류</div>
+                   th:errorclass="is-invalid" class="form-control" placeholder="이름을 입력하세요">
+            <label for="itemName" class="form-label">상품명</label>
+            <div class="invalid-feedback" th:errors="*{itemName}">상품명 오류</div>
         </div>
-        <div>
-            <label for="price">가격</label>
-            <input type="text" id="price" th:field="*{price}"
-                  th:errorclass="field-error" class="form-control" placeholder="가격을 입력하세요">
-            <div class="field-error" th:errors="*{price}">가격 오류</div>
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating mb-2">
+                    <input type="text" id="price" th:field="*{price}"
+                           th:errorclass="is-invalid" class="form-control" placeholder="가격을 입력하세요">
+                    <label for="price">가격</label>
+                    <div class="invalid-feedback" th:errors="*{price}">가격 오류</div>
+                </div>
+            </div>
+           <div class="col-md">
+               <div class="form-floating mb-2">
+                   <input type="text" id="quantity" th:field="*{quantity}"
+                          th:errorclass="is-invalid" class="form-control" placeholder="수량을 입력하세요">
+                   <label for="quantity">수량</label>
+                   <div class="invalid-feedback" th:errors="*{quantity}">수량 오류</div>
+               </div>
+           </div>
         </div>
-        <div>
-            <label for="quantity">수량</label>
-            <input type="text" id="quantity" th:field="*{quantity}"
-                   th:errorclass="field-error" class="form-control" placeholder="수량을 입력하세요">
-            <div class="field-error" th:errors="*{quantity}">수량 오류</div>
-        </div>
-
         <hr class="my-4">
         <div th:if="${#fields.hasGlobalErrors()}">
             <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메세지</p>
