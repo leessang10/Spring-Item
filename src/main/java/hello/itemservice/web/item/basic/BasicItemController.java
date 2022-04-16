@@ -28,12 +28,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class BasicItemController {
     private final ItemRepository itemRepository;
-    private final ItemValidator itemValidator;
-
-    @InitBinder
-    public void init(WebDataBinder dataBinder) {
-        dataBinder.addValidators(itemValidator);
-    }
 
     @GetMapping
     public String items(Model model) {
@@ -59,6 +53,13 @@ public class BasicItemController {
     @PostMapping("add")
     public String addItem(@Validated @ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
+        // 복합 룰 검증
+        if (item.getPrice() != null && item.getQuantity() != null) {
+            int resultPrice = item.getPrice() * item.getQuantity();
+            if (resultPrice < 10000) {
+                bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
+            }
+        }
         // 검증에 실패시 다시 입력 폼으로 보냄
         if (bindingResult.hasErrors()) {
             log.info("error = {}" + bindingResult);
@@ -79,7 +80,19 @@ public class BasicItemController {
     }
 
     @PostMapping("/{itemId}/edit")
-    public String edit(@PathVariable Long itemId, @ModelAttribute Item item) {
+    public String edit(@PathVariable Long itemId, @Validated @ModelAttribute Item item, BindingResult bindingResult) {
+        // 복합 룰 검증
+        if (item.getPrice() != null && item.getQuantity() != null) {
+            int resultPrice = item.getPrice() * item.getQuantity();
+            if (resultPrice < 10000) {
+                bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
+            }
+        }
+        // 검증에 실패시 다시 입력 폼으로 보냄
+        if (bindingResult.hasErrors()) {
+            log.info("error = {}" + bindingResult);
+            return "basic/editForm";
+        }
         itemRepository.update(itemId, item);
         return "redirect:/basic/items/{itemId}";
     }
